@@ -35,7 +35,7 @@ trait PodcastParserTrait
                 // Episodes Data
                 $episodes = $this->getEpisodeData($xml);
             } else {
-                logger("Feed does not exist.");
+                logger("Feed link is broken or is not found.");
                 return false;
             }
 

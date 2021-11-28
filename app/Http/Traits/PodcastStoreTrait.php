@@ -4,31 +4,38 @@ namespace App\Http\Traits;
 
 use App\Models\Podcast;
 
-trait PodcastParserTrait
+trait PodcastStoreTrait
 {
     /**
      * Insert extracted podcast data and their respective episodes into DB.
      *
      * @param  array  $podcastData
-     * @return array|boolean
+     * @return boolean
      */
     public function create(array $podcastData)
     {
-        $podcast = $podcastData['podcast'];
-        $episodes = $podcastData['podcast'];
+        try {
+            $podcast = $podcastData['podcast'];
+            $episodes = $podcastData['episodes'];
 
-        // Create podcast
-        $newPodcast = new Podcast();
-        $newPodcast->title = $podcast->title;
-        $newPodcast->artwork_url = $podcast->artwork_url;
-        $newPodcast->rss_feed_url = $podcast->rss_url;
-        $newPodcast->description = $podcast->description;
-        $newPodcast->language = $podcast->website_url;
-        $newPodcast->website_url = $podcast->website_url;
+            // Create podcast
+            $newPodcast = new Podcast();
+            $newPodcast->title = $podcast->title;
+            $newPodcast->artwork_url = $podcast->artwork_url;
+            $newPodcast->rss_feed_url = $podcast->rss_url;
+            $newPodcast->description = $podcast->description;
+            $newPodcast->language = $podcast->website_url;
+            $newPodcast->website_url = $podcast->website_url;
 
-        // Save episode if podcast is created
-        if ($newPodcast->save()) {
-            $this->createEpisode($newPodcast, $episodes);
+            // Save episode if podcast is created
+            if ($newPodcast->save()) {
+                $this->createEpisode($newPodcast, $episodes);
+            }
+
+            return true;
+        } catch (\Throwable $th) {
+            logger($th);
+            return false;
         }
     }
 
@@ -37,7 +44,7 @@ trait PodcastParserTrait
      *
      * @param Podcast $podcast
      * @param array $episodes;
-     * @return array|boolean
+     * @return void
      */
     public function createEpisode($podcast, $episodes)
     {

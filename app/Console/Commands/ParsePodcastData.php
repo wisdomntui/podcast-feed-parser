@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\ParsePodcast;
 use Illuminate\Console\Command;
 
 class ParsePodcastData extends Command
@@ -11,7 +12,7 @@ class ParsePodcastData extends Command
      *
      * @var string
      */
-    protected $signature = 'parse:podcast-data {feedLink}';
+    protected $signature = 'parse:podcast-data {rssFeed}';
 
     /**
      * The console command description.
@@ -37,6 +38,12 @@ class ParsePodcastData extends Command
      */
     public function handle()
     {
+        // Get RSS Feed from command
+        $rssFeed = $this->argument('rssFeed');
+
+        // Dispatch job to parse and store podcast data in the background.
+        ParsePodcast::dispatch($rssFeed)
+            ->delay(now()->addMinutes(1));
         return Command::SUCCESS;
     }
 }
