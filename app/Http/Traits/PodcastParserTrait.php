@@ -2,6 +2,7 @@
 
 namespace App\Http\Traits;
 
+use App\Models\PodcastEpisode;
 use stdClass;
 
 trait PodcastParserTrait
@@ -96,7 +97,7 @@ trait PodcastParserTrait
 
         // Loop through the item tags which represent episodes and get the needed data.
         foreach ($xml->xpath('//channel/item') as $item) {
-            $episode = new stdClass();
+            $episode = new PodcastEpisode();
             // Write check for null values
             $episode->title = $this->getEpisodeField($item, 'title');
             $episode->description = $this->getEpisodeField($item, 'description');
